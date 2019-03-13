@@ -1,51 +1,103 @@
-Role Name
-=========
+# ansible-role-pip
 
-A brief description of the role goes here.
+## Description
+
+An Ansible role for creating virtualenv's and installing pip packages via the `pip install <package_name>` method or using a pip requirements file as in pip install -r requirements.txt`
+
+## Roadmap
+
+* [ROADMAP.md](./ROADMAP.md)
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should
-be mentioned here. For instance, if the role uses the EC2 module, it may be a
-good idea to mention in this section that the boto package is required.
+The Ansible pip module is used and all requirements are installed by this role including:
+
+* pip
+* virtualenv
+* setuptools
+
+epel is require for RedHat systems and may be added as a role dependency at a later date.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including
-any variables that are in defaults/main.yml, vars/main.yml, and any variables
-that can/should be set via parameters to the role. Any variables that are read
-from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
-be mentioned here as well.
+All role variables as well as testing examples are included in `defaults/main.yml` here:
+
+* [defaults/main.yml](defaults/main.yml)
+
+and can be overridden as seen in the **Example Playbook** section.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in
-regards to parameters that may need to be set for other roles, or variables that
-are used from other roles.
+* epel is require for RedHat systems and may be added as a role dependency at a later date.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables
-passed in as parameters) is always nice for users too:
+Here are a couple of realworld usage examples:
 
-    - hosts: servers
-      roles:
-         - { role: cjsteel.pip, x: 42 }
+### pip install some_package example
+
+Here we create a virtualenv with python2.7 and install molecule and all dependencies into it. In addition we install the **docker** pip package into the same virtualenv. We need to specify the `pip_install_type` of **packages** to use the `pip install package` method:
+
+```yaml
+- hosts: servers
+  vars:
+    pip_debug: true
+    pip_install_type: 'packages'
+
+    pip_install_from_packages:
+    
+      - name: molecule
+        state: present
+        version: "2.20.0.0a1"
+        # parent dir of virtualenv below will be the remote home dir
+        virtualenv: .venv/molecule/2.20.0.0a1
+        virtualenv_python: python2.7
+
+      - name: docker
+        state: present
+        virtualenv: .venv/molecule/2.20.0.0a1
+
+  roles:
+     - role: cjsteel.pip
+```
+
+### pip install using a custom requirements.txt file
+
+Alternatively you can use `pip freeze > files/requirements-your-custom.txt`  to generate a pip requirements file from an existing virtualenv and add it to the roles `files/` directory. You will need to override the `pip_requirements_file_src` variable as demonstrated in the playbook below as well as any other custom variable values before running the role. IMPORTANT, your custom requirements file, say `files/requirements-your-custom.txt` will be renamed to be `requirements.txt` so you should override `pip_requirements_file_src` only.
+
+ We need to specify the `pip_install_type` of **requirements** in order to install to our virtualenv using the  `pip install -r requirements.txt` method:
+
+```yaml
+- hosts: servers
+  vars:
+    pip_debug: true
+    pip_install_type: 'requirements'
+    
+    pip_requirements_file_src: requirements-your-custom.txt
+    pip_install_from_requirements_file:
+      - name: molecule
+        requirements: requirements.txt
+        # parent dir of virtualenv will be remote home dir
+        virtualenv: "{{ pip_default_virtualenv }}"
+        virtualenv_python: "{{ pip_python_version }}"
+
+```
+
+
 
 License
 -------
 
-BSD
+MIT/BSD
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a
-website (HTML is not allowed).
+- [Christopher Steel](http://mcin-cnim.ca/) | [e-mail](mailto:christopher.steel@mcgill.ca)
 
 Inspiration
 -----------

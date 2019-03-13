@@ -4,8 +4,7 @@
 ## pip requirements
 
 pip_required_state: present
-
-#pip_install_type: 'packages' # 'requirements' 
+#  pip_install_type: 'packages' # 'requirements'
 pip_install_type: 'requirements'
 
 pip_python_version: python2.7
@@ -22,9 +21,12 @@ pip_required:
     package: python-virtualenv
     state: "{{ pip_required_state }}"
 
-  # - python-setuptools
+  - name: setuptools
+    package: python-setuptool
+    state: "{{ pip_required_state }}"
 
-pip_default_virtualenv: .venv/molecule/2.20.0.0a1 # parent dir will be remote home dir
+# parent dir of pip_default_virtualenv will be the remote home dir
+pip_default_virtualenv: .venv/molecule/2.20.0.0a1
 
 pip_install_from_packages:
 
@@ -32,14 +34,16 @@ pip_install_from_packages:
     #executable: pip
     state: present
     version: "2.20.0.0a1"
-    virtualenv: "{{ pip_default_virtualenv }}" # parent dir will be remote home dir
+    # parent dir of virtualenv will be remote home dir
+    virtualenv: "{{ pip_default_virtualenv }}"
     virtualenv_python: "{{ pip_python_version }}"
 
   - name: docker
     # executable: pip
     state: present
     version: "3.7.0"
-    virtualenv: "{{ pip_default_virtualenv }}" # parent dir will be remote home
+    # parent dir of virtualenv will be remote home dir
+    virtualenv: "{{ pip_default_virtualenv }}"
     virtualenv_python: "{{ pip_python_version }}"
 
 #  - name: docker-pycreds
@@ -50,6 +54,6 @@ pip_install_from_packages:
 pip_install_from_requirements_file:
   - name: molecule
     requirements: requirements.txt
-    virtualenv: "{{ pip_default_virtualenv }}" # parent dir will be remote home
+    # parent dir of virtualenv will be remote home dir
+    virtualenv: "{{ pip_default_virtualenv }}"
     virtualenv_python: "{{ pip_python_version }}"
-

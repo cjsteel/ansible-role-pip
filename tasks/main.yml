@@ -16,7 +16,7 @@
 - debug:
     var: account_home
   when: pip_debug is defined and
-        pip_debug == true
+        pip_debug
 
 - name: Ensure pip packages installed using pip install package-name
   pip:
@@ -30,15 +30,14 @@
   when: pip_install_type is defined and
         pip_install_type == 'packages'
   register: _virtualenv_configured_results
-  changed_when: _virtualenv_configured_results.changed == true # is success and _virtualenv_configured_results.stdout is search('New python executable')
+  changed_when: _virtualenv_configured_results.changed
   notify:
     - virtualenv default handler
 
 - debug:
     var: _virtualenv_configured_results
   when: pip_debug is defined and
-        pip_debug == true
-
+        pip_debug
 
 ## Copy over requirements file
 
@@ -59,7 +58,6 @@
   when: pip_install_type is defined and
         pip_install_type == 'requirements'
   register: _virtualenv_configured_results
-  changed_when: _virtualenv_configured_results.changed == true # is success and _virtualenv_configured_results.stdout is search('New python executable')
+  changed_when: _virtualenv_configured_results.changed
   notify:
     - virtualenv default handler
-
