@@ -1,0 +1,6 @@
+---
+# handlers file for cjsteel.pip
+
+- name: virtualenv default handler
+  debug:
+    msg: "Updated virtualenv using {{ pip_install_type }} pip install type."

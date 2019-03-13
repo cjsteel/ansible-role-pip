@@ -1,0 +1,65 @@
+---
+# tasks file for cjsteel.pip
+
+- name: Ensure requirements for pip are installed
+  package:
+    name: "{{ item.package }}"
+    state: "{{ item.state }}"
+  loop: "{{ pip_required }}"
+
+- name: Determine remote directory
+  shell: "echo $HOME"
+  register: account_home
+  changed_when: false
+  check_mode: false
+
+- debug:
+    var: account_home
+  when: pip_debug is defined and
+        pip_debug == true
+
+- name: Ensure pip packages installed using pip install package-name
+  pip:
+    name: "{{ item.name | default(item) }}"
+    version: "{{ item.version | default(omit) }}"
+    virtualenv: "{{ account_home.stdout }}/{{ item.virtualenv }}"
+    # virtualenv_python: python2.7
+    state: "{{ item.state | default(omit) }}"
+    # executable: "{{ item.executable | default(omit) }}"
+  loop: "{{ pip_install_from_packages }}"
+  when: pip_install_type is defined and
+        pip_install_type == 'packages'
+  register: _virtualenv_configured_results
+  changed_when: _virtualenv_configured_results.changed == true # is success and _virtualenv_configured_results.stdout is search('New python executable')
+  notify:
+    - virtualenv default handler
+
+- debug:
+    var: _virtualenv_configured_results
+  when: pip_debug is defined and
+        pip_debug == true
+
+
+## Copy over requirements file
+
+- name: "Copy over requirements file and test with pip check"
+  copy:
+    src: "{{ pip_requirements_file_src }}"
+    dest: requirements.txt
+  when: pip_install_type is defined and
+        pip_install_type == 'requirements'
+
+- name: "Ensure pip packages installed using pip install -r requirements.txt"
+  pip:
+    chdir: "{{ item.chdir | default(omit) }}"
+    requirements: "{{ account_home.stdout }}/{{ item.requirements }}"
+    virtualenv: "{{ account_home.stdout }}/{{ item.virtualenv }}"
+    virtualenv_python: "{{ item.virtualenv_python | default(omit) }}"
+  loop: "{{ pip_install_from_requirements_file }}"
+  when: pip_install_type is defined and
+        pip_install_type == 'requirements'
+  register: _virtualenv_configured_results
+  changed_when: _virtualenv_configured_results.changed == true # is success and _virtualenv_configured_results.stdout is search('New python executable')
+  notify:
+    - virtualenv default handler
+

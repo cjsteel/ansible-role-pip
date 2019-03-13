@@ -46,3 +46,9 @@ Author Information
 
 An optional section for the role authors to include contact information, or a
 website (HTML is not allowed).
+
+Inspiration
+-----------
+
+* [geerlingguy - ansible-role-pip](https://github.com/geerlingguy/ansible-role-pip)
+* [cchurch - ansible-role-virtualenv](https://github.com/cchurch/ansible-role-virtualenv/)

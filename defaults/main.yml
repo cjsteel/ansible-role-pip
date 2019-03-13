@@ -1,0 +1,55 @@
+---
+# defaults file for cjsteel.pip
+
+## pip requirements
+
+pip_required_state: present
+
+#pip_install_type: 'packages' # 'requirements' 
+pip_install_type: 'requirements'
+
+pip_python_version: python2.7
+pip_requirements_file_src: requirements-molecule-2.20.0.a1.txt
+pip_debug: false
+
+pip_required:
+
+  - name: pip
+    package: python-pip
+    state: "{{ pip_required_state }}"
+
+  - name: virtualenv
+    package: python-virtualenv
+    state: "{{ pip_required_state }}"
+
+  # - python-setuptools
+
+pip_default_virtualenv: .venv/molecule/2.20.0.0a1 # parent dir will be remote home dir
+
+pip_install_from_packages:
+
+  - name: molecule
+    #executable: pip
+    state: present
+    version: "2.20.0.0a1"
+    virtualenv: "{{ pip_default_virtualenv }}" # parent dir will be remote home dir
+    virtualenv_python: "{{ pip_python_version }}"
+
+  - name: docker
+    # executable: pip
+    state: present
+    version: "3.7.0"
+    virtualenv: "{{ pip_default_virtualenv }}" # parent dir will be remote home
+    virtualenv_python: "{{ pip_python_version }}"
+
+#  - name: docker-pycreds
+#    executable: pip
+#    state: present
+#    version: "0.4.0"
+
+pip_install_from_requirements_file:
+  - name: molecule
+    requirements: requirements.txt
+    virtualenv: "{{ pip_default_virtualenv }}" # parent dir will be remote home
+    virtualenv_python: "{{ pip_python_version }}"
+
