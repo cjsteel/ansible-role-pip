@@ -1,4 +1,4 @@
---- 
+---
 # molecule/lxd/playbook2.yml
 #
 # Regular playbook stuff starts here
@@ -25,4 +25,3 @@
     - role: weareinteractive.users
     - role: cjsteel.pip
     # - role: jdauphant.vagrant
-
