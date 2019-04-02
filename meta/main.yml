@@ -3,17 +3,12 @@ dependencies: []
 
 galaxy_info:
   author: Christopher Steel
+  role_name: pip
   description: Ensure for pip requirments, virtualenv's and packages
   company: McGill Centre for Integrative Neuroscience (MCIN)
-  license: "license (BSD, MIT)"
-  min_ansible_version: 2.0
+  license: MIT
+  min_ansible_version: 2.7.8
   platforms:
-    - name: EL
-      versions:
-        - all
-    - name: Fedora
-      versions:
-        - all
     - name: Debian
       versions:
         - all
@@ -21,9 +16,9 @@ galaxy_info:
       versions:
         - all
   galaxy_tags:
-    - system
-    - server
-    - packaging
-    - python
+    - development
+    - molecule
     - pip
+    - python
     - tools
+    - virtualenv
