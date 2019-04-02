@@ -10,4 +10,4 @@ github-release delete \
   --repo $GIT_REPOSITORY \
   --tag $GIT_TAG \
   --name $GIT_TAG \
-  "*.*"
+  $GIT_TAG.zip $GIT_TAG.tar.gz
