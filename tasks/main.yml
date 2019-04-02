@@ -1,12 +1,11 @@
 ---
 # tasks file for cjsteel.pip
 
-# - name: "Waiting for unattended updates to complete"
-#   shell: while pgrep unattended; do sleep 10; done;
+- name: "Waiting for unattended updates to complete"
+  shell: while pgrep unattended; do sleep 10; done;
 
-# - name: "Waiting for apt system update to complete"
-#   shell: while pgrep apt; do sleep 10; done;
-#   removes: /var/lib/dpkg/lock
+- name: "Waiting for apt system update to complete"
+  shell: while pgrep apt; do sleep 10; done;
 
 - name: Ensure requirements for pip are installed
   package:
