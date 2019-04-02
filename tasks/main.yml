@@ -51,7 +51,7 @@
 - name: "Copy over requirements file and test with pip check"
   copy:
     src: "{{ pip_requirements_file_src }}"
-    dest: requirements.txt
+    dest: "{{ account_home.stdout }}/requirements.txt"
   when: pip_install_type is defined and
         pip_install_type == 'requirements'
 
