@@ -21,9 +21,9 @@ pip_required:
     package: python-virtualenv
     state: "{{ pip_required_state }}"
 
-  #- name: setuptools
-  #  package: python-setuptools
-  #  state: "{{ pip_required_state }}"
+  - name: python-setuptools
+    package: python-setuptools
+    state: "{{ pip_required_state }}"
 
 # parent dir of pip_default_virtualenv will be the remote home dir
 pip_default_virtualenv: .venv/molecule/2.20.0.0a1

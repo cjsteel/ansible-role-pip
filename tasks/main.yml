@@ -12,6 +12,7 @@
     name: "{{ item.package }}"
     state: "{{ item.state }}"
   loop: "{{ pip_required }}"
+  ignore_errors: true
 
 - name: Determine remote directory
   shell: "echo $HOME"
