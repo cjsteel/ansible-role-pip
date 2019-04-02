@@ -4,8 +4,8 @@
 ## pip requirements
 
 pip_required_state: present
-#  pip_install_type: 'packages' # 'requirements'
-pip_install_type: 'requirements'
+pip_install_type: 'packages' # 'requirements'
+#pip_install_type: 'requirements'
 
 pip_python_version: python2.7
 pip_requirements_file_src: requirements-molecule-2.20.0.a1.txt

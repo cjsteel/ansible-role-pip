@@ -1,0 +1,28 @@
+--- 
+# molecule/lxd/playbook2.yml
+#
+# Regular playbook stuff starts here
+#
+#
+- name: Converge
+  hosts: all
+  vars:
+    pip_debug: true
+    pip_install_packages:
+      - docker
+    users:
+      - username: ubuntu
+        groups:
+          - ubuntu
+        append: true
+    vagrant_version: 2.2.3
+    vagrant_virtualbox_install: false
+
+#  galaxy roles below must be in projects requirements.yml file in order to work
+#
+#
+  roles:
+    - role: weareinteractive.users
+    - role: cjsteel.pip
+    # - role: jdauphant.vagrant
+
