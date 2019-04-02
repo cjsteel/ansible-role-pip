@@ -22,7 +22,7 @@ pip_required:
     state: "{{ pip_required_state }}"
 
   - name: setuptools
-    package: python-setuptool
+    package: python-setuptools
     state: "{{ pip_required_state }}"
 
 # parent dir of pip_default_virtualenv will be the remote home dir

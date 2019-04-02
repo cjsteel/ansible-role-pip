@@ -4,6 +4,10 @@
 
 An Ansible role for creating virtualenv's and installing pip packages via the `pip install <package_name>` method or using a pip requirements file as in pip install -r requirements.txt`
 
+## Notes
+
+* currently actively tested using **LXD** as the Molecule provider.
+
 ## Roadmap
 
 * [ROADMAP.md](./ROADMAP.md)
@@ -85,6 +89,19 @@ Alternatively you can use `pip freeze > files/requirements-your-custom.txt`  to 
         virtualenv: "{{ pip_default_virtualenv }}"
         virtualenv_python: "{{ pip_python_version }}"
 
+```
+
+## Testing
+
+### Manual
+
+```shell
+molecule converge -s lxd
+molecule login -s lxd -h pip-xenial
+source ~/.venv/molecule/2.20.0.0a1/bin/activate
+molecule init role -r myrole
+cd myrole/
+ls -al
 ```
 
 
