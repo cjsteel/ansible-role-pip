@@ -1,7 +1,7 @@
 # ansible-role-pip
 
 [![Build Status](https://travis-ci.org/cjsteel/ansible-role-pip.svg?branch=master)](https://travis-ci.org/cjsteel/ansible-role-pip)
-[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-resources-blue.svg)](https://galaxy.ansible.com/cjsteel/pip/)
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-pip-blue.svg)](https://galaxy.ansible.com/cjsteel/pip/)
 
 ## Description
 
