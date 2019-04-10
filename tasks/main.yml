@@ -3,9 +3,15 @@
 
 - name: "Waiting for unattended updates to complete"
   shell: while pgrep unattended; do sleep 10; done;
+  args:
+    warn: false
+  register: pip_pgrep_unattended_output
 
 - name: "Waiting for apt system update to complete"
   shell: while pgrep apt; do sleep 10; done;
+  args:
+    warn: false
+  register: pip_pgrep_apt_output
 
 - name: Ensure requirements for pip are installed
   package:
