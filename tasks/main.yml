@@ -14,6 +14,7 @@
   register: pip_pgrep_apt_output
 
 - name: Ensure requirements for pip are installed
+  become: true
   package:
     name: "{{ item.package }}"
     state: "{{ item.state }}"
