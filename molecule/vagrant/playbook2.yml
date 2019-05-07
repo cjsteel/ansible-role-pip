@@ -1,4 +1,9 @@
 ---
+# molecule/vagrant/playbook2.yml
+#
+# Regular playbook stuff starts here
+#
+#
 # molecule/lxd/playbook2.yml
 #
 # Regular playbook stuff starts here
@@ -19,6 +24,4 @@
     vagrant_virtualbox_install: false
 
   roles:
-    - role: weareinteractive.users
-      become: true
     - role: cjsteel.pip

@@ -8,6 +8,7 @@ rules:
     max-spaces-inside: 1
     level: error
   line-length: disable
+  truthy: disable          # required by all(?) robertdebock roles
   comments: 
     require-starting-space: false
   comments-indentation: false 

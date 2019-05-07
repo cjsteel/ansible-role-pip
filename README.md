@@ -13,6 +13,8 @@ An Ansible role for creating virtualenv's and installing pip packages via the `p
 
 ## Roadmap
 
+See ROADMAP.md for outstanding issues and new features
+
 * [ROADMAP.md](./ROADMAP.md)
 
 Requirements
