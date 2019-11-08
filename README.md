@@ -126,3 +126,5 @@ Inspiration
 
 * [geerlingguy - ansible-role-pip](https://github.com/geerlingguy/ansible-role-pip)
 * [cchurch - ansible-role-virtualenv](https://github.com/cchurch/ansible-role-virtualenv/)
+* [windmill - ansible-role-virtualenv](https://opendev.org/windmill/ansible-role-virtualenv/)
+* [robertdebock - ansible-role-python_pip](https://github.com/robertdebock/ansible-role-python_pip)
