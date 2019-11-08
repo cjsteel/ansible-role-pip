@@ -1,17 +1,17 @@
 ---
 # tasks file for cjsteel.pip
 
-- name: "Waiting for unattended updates to complete"
-  shell: while pgrep unattended; do sleep 10; done;
-  args:
-    warn: false
-  register: pip_pgrep_unattended_output
+#- name: "Waiting for unattended updates to complete"
+#  shell: while pgrep unattended; do sleep 10; done;
+#  args:
+#    warn: false
+#  register: pip_pgrep_unattended_output
 
-- name: "Waiting for apt system update to complete"
-  shell: while pgrep apt; do sleep 10; done;
-  args:
-    warn: false
-  register: pip_pgrep_apt_output
+#- name: "Waiting for apt system update to complete"
+#  shell: while pgrep apt; do sleep 10; done;
+#  args:
+#    warn: false
+#  register: pip_pgrep_apt_output
 
 - name: Ensure requirements for pip are installed
   become: true
@@ -22,6 +22,7 @@
   ignore_errors: true
 
 - name: Determine remote directory
+  become: false
   shell: "echo $HOME"
   register: account_home
   changed_when: false
@@ -33,6 +34,7 @@
         pip_debug
 
 - name: Ensure pip packages installed using pip install package-name
+  become: false
   pip:
     name: "{{ item.name | default(item) }}"
     version: "{{ item.version | default(omit) }}"
@@ -56,6 +58,7 @@
 ## Copy over requirements file
 
 - name: "Copy over requirements file and test with pip check"
+  become: false
   copy:
     src: "{{ pip_requirements_file_src }}"
     dest: "{{ account_home.stdout }}/requirements.txt"
@@ -63,6 +66,7 @@
         pip_install_type == 'requirements'
 
 - name: "Ensure pip packages installed using pip install -r requirements.txt"
+  become: false
   pip:
     chdir: "{{ item.chdir | default(omit) }}"
     requirements: "{{ account_home.stdout }}/{{ item.requirements }}"
