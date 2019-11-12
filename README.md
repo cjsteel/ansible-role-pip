@@ -1,130 +1,125 @@
-# ansible-role-pip
+# pip
 
-[![Build Status](https://travis-ci.org/cjsteel/ansible-role-pip.svg?branch=master)](https://travis-ci.org/cjsteel/ansible-role-pip)
-[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-pip-blue.svg)](https://galaxy.ansible.com/cjsteel/pip/)
 
-## Description
+TODO: [![Build Status](https://travis-ci.org/cjsteel/ansible-role-pip.svg?branch=master)](https://travis-ci.org/cjsteel/ansible-role-pip)
 
-An Ansible role for creating virtualenv's and installing pip packages via the `pip install <package_name>` method or using a pip requirements file as in pip install -r requirements.txt`
+The purpose of this role is to install and configure pip on your system.
 
-## Notes
+TODO: [Unit tests](https://travis-ci.org/cjsteel/ansible-role-pip) are done on every commit and periodically.
 
-* currently actively tested using **LXD** as the Molecule provider.
+If you find issues, please register them in [GitHub](https://github.com/cjsteel/ansible-role-pip/issues)
 
-## Roadmap
+To test this role locally please use [Molecule](https://github.com/metacloud/molecule):
 
-See ROADMAP.md for outstanding issues and new features
+```shell
+# Docker test:
+pip install molecule ara
+molecule test
+# Vagrant tests
+molecule test --scenario-name vagrant
+```
+There are many scenarios available, please have a look in the `molecule/` directory.
 
-* [ROADMAP.md](./ROADMAP.md)
+## Context
 
-Requirements
-------------
+This role is a part of a collection of compatible roles.
 
-The Ansible pip module is used and all requirements are installed by this role including:
+## Requirements
 
-* pip
-* virtualenv
-* setuptools
 
-epel is require for RedHat systems and may be added as a role dependency at a later date.
+- A target system or VM with the packages required to run Ansible.
+- Access to any repository(ies) containing any required packages.
+- A recent version of Ansible. (Created using Ansible 2.8.2)
 
-Role Variables
---------------
+## Role Variables
 
-All role variables as well as testing examples are included in `defaults/main.yml` here:
+- pip_parameter: Description of values. [default: value]
 
-* [defaults/main.yml](defaults/main.yml)
+## Dependencies
 
-and can be overridden as seen in the **Example Playbook** section.
 
-Dependencies
-------------
+- None known.
 
-* epel is require for RedHat systems and may be added as a role dependency at a later date.
+## Compatibility
 
-Example Playbook
-----------------
 
-Here are a couple of realworld usage examples:
+This role has been tested against the following distributions and Ansible version:
 
-### pip install some_package example
+|distribution|ansible 2.8.2|ansible 2.9.|ansible 3.0|ansible 3.1|ansible devel|
+|------------|-----------|-----------|-----------|-----------|-------------|
+|alpine-edge*|||||*|
+|alpine-latest|||||*|
+|archlinux|||||*|
+|centos-6|||||*|
+|centos-latest|||||*|
+|debian-latest|||||*|
+|debian-stable|||||*|
+|debian-unstable*|||||*|
+|fedora-latest|||||*|
+|fedora-rawhide*|||||*|
+|opensuse-leap|||||*|
+|ubuntu-artful|||||*|
+|ubuntu-devel*|||||*|
+|ubuntu-latest|||||*|
 
-Here we create a virtualenv with python2.7 and install molecule and all dependencies into it. In addition we install the **docker** pip package into the same virtualenv. We need to specify the `pip_install_type` of **packages** to use the `pip install package` method:
+A single star means the build may fail, it's marked as an experimental build.
+
+## Example Playbook
+
 
 ```yaml
-- hosts: servers
-  vars:
-    pip_debug: true
-    pip_install_type: 'packages'
-
-    pip_install_from_packages:
-    
-      - name: molecule
-        state: present
-        version: "2.20.0.0a1"
-        # parent dir of virtualenv below will be the remote home dir
-        virtualenv: .venv/molecule/2.20.0.0a1
-        virtualenv_python: python2.7
-
-      - name: docker
-        state: present
-        virtualenv: .venv/molecule/2.20.0.0a1
+---
+- name: pip
+  hosts: all
+  gather_facts: no
+  become: yes
 
   roles:
-     - role: cjsteel.pip
+    - role: cjsteel.bootstrap
+    - role: cjsteel.pip
+      pip_parameter: value
 ```
 
-### pip install using a custom requirements.txt file
+To install this role:
+- Install this role individually using `ansible-galaxy install cjsteel.pip`
 
-Alternatively you can use `pip freeze > files/requirements-your-custom.txt`  to generate a pip requirements file from an existing virtualenv and add it to the roles `files/` directory. You will need to override the `pip_requirements_file_src` variable as demonstrated in the playbook below as well as any other custom variable values before running the role. IMPORTANT, your custom requirements file, say `files/requirements-your-custom.txt` will be renamed to be `requirements.txt` so you should override `pip_requirements_file_src` only.
-
- We need to specify the `pip_install_type` of **requirements** in order to install to our virtualenv using the  `pip install -r requirements.txt` method:
+Sample roles/requirements.yml: (install with `ansible-galaxy install -r roles/requirements.yml
 
 ```yaml
-- hosts: servers
-  vars:
-    pip_debug: true
-    pip_install_type: 'requirements'
-    
-    pip_requirements_file_src: requirements-your-custom.txt
-    pip_install_from_requirements_file:
-      - name: molecule
-        requirements: requirements.txt
-        # parent dir of virtualenv will be remote home dir
-        virtualenv: "{{ pip_default_virtualenv }}"
-        virtualenv_python: "{{ pip_python_version }}"
-
+---
+- name: cjsteel.bootstrap
+- name: cjsteel.pip
 ```
 
 ## Testing
 
-### Manual
+### molecule testing and no_log and debug options
 
-```shell
-molecule converge -s lxd
-molecule login -s lxd -h pip-xenial
-source ~/.venv/molecule/2.20.0.0a1/bin/activate
-molecule init role -r myrole
-cd myrole/
-ls -al
+You will need to set the environment variable of `MOLECULE_DEBUG` to log errors, alternately you may prefer to debug manually by using the  `--debug` flag. Here is an example applied against the *vagrant* molecule scenario:
+
+```text
+molecule --debug create -s vagrant
 ```
 
+## License
 
+Apache License, Version 2.0
 
-License
--------
+## Author Information
 
-MIT/BSD
+[Christopher Steel](https://cjsteel.github.io/) <chris.steel@gmail.com>
 
-Author Information
-------------------
+This role was generated using a modified version of Robert de Bock's excellent ansible-role-skeleton
 
-- [Christopher Steel](http://mcin-cnim.ca/) | [e-mail](mailto:christopher.steel@mcgill.ca)
+* [github.com/robertdebock/ansible-role-skeleton](https://github.com/robertdebock/ansible-role-skeleton)
 
-Inspiration
------------
+See Robert's personal site for many examples of high quality Linux flavour and version agnostic roles. 
 
-* [geerlingguy - ansible-role-pip](https://github.com/geerlingguy/ansible-role-pip)
-* [cchurch - ansible-role-virtualenv](https://github.com/cchurch/ansible-role-virtualenv/)
-* [windmill - ansible-role-virtualenv](https://opendev.org/windmill/ansible-role-virtualenv/)
-* [robertdebock - ansible-role-python_pip](https://github.com/robertdebock/ansible-role-python_pip)
+* [Robert de Bock](https://robertdebock.nl/)
+
+Other collections of great public facing Ansible roles:
+
+* [DebOps - Maciej Delmanowski](https://github.com/debops)
+* [Jeff Geerling](https://github.com/geerlingguy)
+
+* [Larry Smith Jr.](https://github.com/mrlesmithjr)

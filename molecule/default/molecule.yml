@@ -1,23 +1,68 @@
 ---
-# molecule/default/molecule.yml
-# molecule/docker/molecule.yml
-
 dependency:
   name: galaxy
-driver:
-  name: docker
+  options:
+    role-file: requirements.yml
 lint:
   name: yamllint
+driver:
+  name: docker
 platforms:
-  - name: pip-bionic
-    image: ubuntu:18.04
+  - name: pip-alpine-edge
+    image: alpine:edge
+    pre_build_image: yes
+    command: sh -c "while true ; do sleep 1 ; done"
+  - name: pip-alpine-latest
+    image: alpine:latest
+    pre_build_image: yes
+    command: sh -c "while true ; do sleep 1 ; done"
+  - name: pip-archlinux
+    image: archlinux/base
+    pre_build_image: yes
+  - name: pip-centos-6
+    image: centos:6
+    pre_build_image: yes
+  - name: pip-centos-latest
+    image: centos:latest
+    pre_build_image: yes
+  - name: pip-debian-stable
+    image: debian:stable
+    pre_build_image: yes
+  - name: pip-debian-unstable
+    image: debian:unstable
+    pre_build_image: yes
+  - name: pip-fedora-latest
+    image: fedora:latest
+    pre_build_image: yes
+  - name: pip-fedora-rawhide
+    image: fedora:rawhide
+    pre_build_image: yes
+  - name: pip-opensuse-leap
+    image: opensuse/leap
+    pre_build_image: yes
+  - name: pip-ubuntu-latest
+    image: ubuntu:latest
+    pre_build_image: yes
+  - name: pip-ubuntu-rolling
+    image: ubuntu:rolling
+    pre_build_image: yes
+  - name: pip-ubuntu-devel
+    image: ubuntu:devel
+    pre_build_image: yes
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
+  playbooks:
+    prepare: ../resources/prepare.yml
+    converge: ../resources/playbook.yml
+  inventory:
+    host_vars:
+      pip-fedora-latest:
+        ansible_python_interpreter: /usr/bin/python3
+      pip-fedora-rawhide:
+        ansible_python_interpreter: /usr/bin/python3
+  config_options:
+    defaults:
+      stdout_callback: yaml
+      bin_ansible_callbacks: true
 scenario:
   name: default
-verifier:
-  name: testinfra
-  lint:
-    name: flake8

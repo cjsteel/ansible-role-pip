@@ -1,24 +1,48 @@
 ---
-dependencies: []
-
+# pip/meta/main.yml
 galaxy_info:
   author: Christopher Steel
   role_name: pip
-  description: Ensure for pip requirments, virtualenv's and packages
-  company: McGill Centre for Integrative Neuroscience (MCIN)
-  license: MIT
-  min_ansible_version: 2.7.8
+  description: Install and configure pip on your system.
+  license: Apache-2.0
+  company: none
+  min_ansible_version: 2.6
+
   platforms:
+    - name: Alpine
+      versions:
+        - all
+    - name: ArchLinux
+      version:
+        - all
     - name: Debian
+      versions:
+        - all
+    - name: EL
+      version:
+        - 6
+        - 7
+    - name: Fedora
+      versions:
+        - all
+    - name: OpenSUSE
       versions:
         - all
     - name: Ubuntu
       versions:
-        - all
+        - artful
+        - bionic
+
   galaxy_tags:
-    - development
-    - molecule
     - pip
-    - python
-    - tools
-    - virtualenv
+    - alpine
+    - archlinux
+    - centos
+    - debian
+    - el
+    - fedora
+    - opensuse
+    - rhel
+    - ubuntu
+
+dependencies: []

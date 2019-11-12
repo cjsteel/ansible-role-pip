@@ -6,24 +6,20 @@ dependency:
 lint:
   name: yamllint
 driver:
-  name: vagrant
-  provider:
-    name: virtualbox
+  name: docker
 platforms:
-  - name: pip-bionic
-    box: ubuntu/bionic64
+  - name: pip-alpine-edge
+    image: alpine:edge
+    pre_build_image: yes
+    command: sh -c "while true ; do sleep 1 ; done"
 provisioner:
   name: ansible
   playbooks:
     prepare: ../resources/prepare.yml
     converge: ../resources/playbook.yml
-  inventory:
-    host_vars:
-      pip-fedora:
-        ansible_python_interpreter: /usr/bin/python3
   config_options:
     defaults:
       stdout_callback: yaml
       bin_ansible_callbacks: true
 scenario:
-  name: vagrant
+  name: alpine-edge

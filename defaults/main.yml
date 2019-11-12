@@ -1,59 +1,73 @@
 ---
-# defaults file for cjsteel.pip
+# pip/defaults/main.yml
 
-## pip requirements
+pip_python_version: 2
 
-pip_required_state: present
-pip_install_type: 'packages'
-# pip_install_type: 'requirements'
 
-pip_python_version: python2.7
-pip_requirements_file_src: requirements-molecule-2.20.0.a1.txt
-pip_debug: false
+_pip2_requirements:
+  default:
+    - python-pip
+    - python-virtualenv
+  Debian:
+    - python-pip
+    - python-virtualenv
+  CentOS:
+    - python-pip
+    - python-virtualenv
+  CentOS-7:
+    - python-pip
+    - python-virtualenv
+  Fedora:
+    - python-pip
+    - python-virtualenv
+  openSUSE Leap:
+    - python-pip
+    - python-virtualenv
+  Ubuntu:
+    - python-pip
+    - python-virtualenv
 
-pip_required:
+pip2_requirements: "{{ _pip2_requirements[ansible_distribution ~ '-' ~ ansible_distribution_major_version] | default(_pip2_requirements[ansible_distribution] | default(_pip2_requirements['default'])) }}"
 
-  - name: pip
-    package: python-pip
-    state: "{{ pip_required_state }}"
+_pip3_requirements:
+  default:
+    - python3-pip
+    - python3-setuptools
+    - python3-venv
+  Debian:
+    - python3-pip
+    - python3-setuptools
+    - python3-venv
+  RedHat:
+    - python3-pip
+    - python3-setuptools
+    - python3-venv
 
-  - name: virtualenv
-    package: python-virtualenv
-    state: "{{ pip_required_state }}"
+pip3_requirements: "{{ _pip3_requirements[ansible_distribution ~ '-' ~ ansible_distribution_major_version] | default(_pip3_requirements[ansible_distribution] | default(_pip3_requirements['default'])) }}"
 
-  - name: python-setuptools
-    package: python-setuptools
-    state: "{{ pip_required_state }}"
+pip_user: '{{ ansible_user }}'
 
-# parent dir of pip_default_virtualenv will be the remote home dir
-pip_default_virtualenv: .venv/molecule/2.20.0.0a1
+pip__env_proxy_enabled: no
 
-pip_install_from_packages:
+pip_virtualenvs_base_path: ~/venvs
+
+pip_virtualenvs:
+  - name: ansible
+    version: 2.3.3
+    package: ansible
+    state: present
+
+  - name: ansible
+    package: ansible
+    version: 2.4.6
+    state: present
+
+  - name: ansible
+    package: ansible
+    version: 2.5.15
+    state: present
 
   - name: molecule
-    #executable: pip
+    package: molecule
+    version: 2.22
     state: present
-    version: "2.20.0.0a1"
-    # parent dir of virtualenv will be remote home dir
-    virtualenv: "{{ pip_default_virtualenv }}"
-    virtualenv_python: "{{ pip_python_version }}"
-
-  - name: docker
-    # executable: pip
-    state: present
-    version: "3.7.0"
-    # parent dir of virtualenv will be remote home dir
-    virtualenv: "{{ pip_default_virtualenv }}"
-    virtualenv_python: "{{ pip_python_version }}"
-
-#  - name: docker-pycreds
-#    executable: pip
-#    state: present
-#    version: "0.4.0"
-
-pip_install_from_requirements_file:
-  - name: molecule
-    requirements: requirements.txt
-    # parent dir of virtualenv will be remote home dir
-    virtualenv: "{{ pip_default_virtualenv }}"
-    virtualenv_python: "{{ pip_python_version }}"

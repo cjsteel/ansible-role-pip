@@ -1,81 +1,93 @@
 ---
-# tasks file for cjsteel.pip
+# pip/tasks/main.yml
 
-#- name: "Waiting for unattended updates to complete"
-#  shell: while pgrep unattended; do sleep 10; done;
-#  args:
-#    warn: false
-#  register: pip_pgrep_unattended_output
-
-#- name: "Waiting for apt system update to complete"
-#  shell: while pgrep apt; do sleep 10; done;
-#  args:
-#    warn: false
-#  register: pip_pgrep_apt_output
-
-- name: Ensure requirements for pip are installed
-  become: true
+- name: install pip2 requirements
   package:
+    name: "{{ pip2_requirements }}"
+    state: present
+  register: pip_install_requirements
+  until: pip_install_requirements is succeeded
+  retries: 3
+  when: pip_python_version == 2
+
+- name: install pip3 requirements
+  package:
+    name: "{{ pip3_requirements }}"
+    state: present
+  register: pip_install_requirements
+  until: pip_install_requirements is succeeded
+  retries: 3
+  when: pip_python_version == 3
+
+- name: Ensure (Python2.x) virtualenvs exist and python package(s) are installed to them
+  become: '{{ pip_user }}'
+  pip:
     name: "{{ item.package }}"
+    virtualenv: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}"
+    version: "{{ item.version }}"
+    environment: "{{ item.environment | default(omit) }}"
     state: "{{ item.state }}"
-  loop: "{{ pip_required }}"
-  ignore_errors: true
+  loop: "{{ pip_virtualenvs|default([]) }}"
+  when: item.state == 'present'
+  register: pip_create_virtualenvs
+  until: pip_create_virtualenvs is succeeded
+  when: pip_python_version == 2
 
-- name: Determine remote directory
-  become: false
-  shell: "echo $HOME"
-  register: account_home
-  changed_when: false
-  check_mode: false
-
-- debug:
-    var: account_home
-  when: pip_debug is defined and
-        pip_debug
-
-- name: Ensure pip packages installed using pip install package-name
-  become: false
+- name: Ensure (Python 3.x) venvs exist and python package(s) are installed to them
+  become: '{{ pip_user }}'
   pip:
-    name: "{{ item.name | default(item) }}"
-    version: "{{ item.version | default(omit) }}"
-    virtualenv: "{{ account_home.stdout }}/{{ item.virtualenv }}"
-    # virtualenv_python: python2.7
-    state: "{{ item.state | default(omit) }}"
-    # executable: "{{ item.executable | default(omit) }}"
-  loop: "{{ pip_install_from_packages }}"
-  when: pip_install_type is defined and
-        pip_install_type == 'packages'
-  register: _virtualenv_configured_results
-  changed_when: _virtualenv_configured_results.changed
-  notify:
-    - virtualenv default handler
+    name: "{{ item.package }}"
+    virtualenv: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}"
+    virtualenv_command: /usr/bin/python3 -m venv
+    version: "{{ item.version }}"
+    environment: "{{ item.environment | default(omit) }}"
+    state: "{{ item.state }}"
+  loop: "{{ pip_virtualenvs|default([]) }}"
+  when: item.state == 'present'
+  register: pip_create_virtualenvs
+  until: pip_create_virtualenvs is succeeded
+  when: pip_python_version == 3
 
-- debug:
-    var: _virtualenv_configured_results
-  when: pip_debug is defined and
-        pip_debug
+- name: Ensure virtualenvs exist and python package(s) are installed to them
+  become: '{{ pip_user }}'
+  file:
+    path: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}"
+    state: "{{ item.state }}"
+  loop: "{{ pip_virtualenvs|default([]) }}"
+  when: item.state == 'absent'
+  register: pip_delete_virtualenvs
+  until: pip_delete_virtualenvs is succeeded
 
-## Copy over requirements file
+- name: Ensure for fragments directory
+  become: '{{ pip_user }}'
+  file:
+    path: ~/bin/fragments
+    state: directory
+    mode: '0744'
 
-- name: "Copy over requirements file and test with pip check"
-  become: false
+- name: Ensure for aliases
+  become: '{{ pip_user }}'
   copy:
-    src: "{{ pip_requirements_file_src }}"
-    dest: "{{ account_home.stdout }}/requirements.txt"
-  when: pip_install_type is defined and
-        pip_install_type == 'requirements'
+    dest: ~/bin/fragments/{{ item.name }}-{{ item.version }}.sh
+    content: "alias {{ item.name }}-{{ item.version }}='source {{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}/bin/activate'\n"
+    mode: '0744'
+  loop: "{{ pip_virtualenvs|default([]) }}"
+  when: item.state == 'present'
 
-- name: "Ensure pip packages installed using pip install -r requirements.txt"
-  become: false
-  pip:
-    chdir: "{{ item.chdir | default(omit) }}"
-    requirements: "{{ account_home.stdout }}/{{ item.requirements }}"
-    virtualenv: "{{ account_home.stdout }}/{{ item.virtualenv }}"
-    virtualenv_python: "{{ item.virtualenv_python | default(omit) }}"
-  loop: "{{ pip_install_from_requirements_file }}"
-  when: pip_install_type is defined and
-        pip_install_type == 'requirements'
-  register: _virtualenv_configured_results
-  changed_when: _virtualenv_configured_results.changed
-  notify:
-    - virtualenv default handler
+- name: assemble our fragments into a ~/bash_aliases file
+  become: '{{ pip_user }}'
+  assemble:
+    backup: yes
+    remote_src: yes 
+    src: ~/bin/fragments
+    dest: ~/.bash_aliases
+    mode: 0644
+
+- name: remove our ~/.bash_aliases fragments directory
+  become: '{{ pip_user }}'
+  file:
+    state: absent
+    path: ~/bin/fragments
+  with_items:
+    - "{{ pip_virtualenvs }}"
+

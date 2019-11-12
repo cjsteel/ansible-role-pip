@@ -1,4 +1,3 @@
-skip_list:
-  - '204'   # required by wareinteractive.users
-  - '301'
-  - '701'   # required by wareinteractive.users
+exclude_paths:
+  - ./meta/version.yml
+  - ./meta/exception.yml
