@@ -1,9 +1,0 @@
----
-# pip/handlers/main.yml
-
-- name: restart pip
-  service:
-    name: "{{ pip_service }}"
-    state: restarted
-  when:
-    - ansible_virtualization_type != "docker"

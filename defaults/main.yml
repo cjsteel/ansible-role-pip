@@ -1,7 +1,7 @@
 ---
 # pip/defaults/main.yml
 
-pip_python_version: 2
+pip_python_version: 3
 
 
 _pip2_requirements:
