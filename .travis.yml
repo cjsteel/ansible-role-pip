@@ -11,9 +11,9 @@ env:
   global:
     namespace="cjsteel"
   matrix:
-    - image="ubuntu"
-    - image="centos" tag="7"
-    - image="centos"
+    - image="ubuntu" tag="bionic"
+    #- image="centos" tag="7"
+    #- image="centos"
 
 #matrix:
 #  allow_failures:
