@@ -45,7 +45,7 @@ _pip3_requirements:
 
 pip3_requirements: "{{ _pip3_requirements[ansible_distribution ~ '-' ~ ansible_distribution_major_version] | default(_pip3_requirements[ansible_distribution] | default(_pip3_requirements['default'])) }}"
 
-pip_user: '{{ ansible_user }}'
+pip_username: '{{ ansible_user }}'
 
 pip__env_proxy_enabled: no
 

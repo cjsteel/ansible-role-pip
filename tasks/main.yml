@@ -19,75 +19,111 @@
   retries: 3
   when: pip_python_version == 3
 
+- name: Ensure the specified user exists
+  getent:
+    database: passwd
+    key: "{{ pip_username }}"
+    fail_key: no
+  when:
+    - pip_username is defined
+
 - name: Ensure (Python2.x) virtualenvs exist and python package(s) are installed to them
-  become: '{{ pip_user }}'
   pip:
     name: "{{ item.package }}"
-    virtualenv: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}"
-    version: "{{ item.version }}"
+    virtualenv: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.env_version }}"
+    version: "{{ item.version | default(omit) }}"
     environment: "{{ item.environment | default(omit) }}"
     state: "{{ item.state }}"
   loop: "{{ pip_virtualenvs|default([]) }}"
-  when: item.state == 'present'
+  become: yes
+  become_user: "{{ pip_username }}"
+  when:
+    - pip_python_version == 2
+    #- item.state == 'present'
+    - getent_passwd is defined
+    - getent_passwd[pip_username] != none
+
   register: pip_create_virtualenvs
   until: pip_create_virtualenvs is succeeded
-  when: pip_python_version == 2
 
 - name: Ensure (Python 3.x) venvs exist and python package(s) are installed to them
-  become: '{{ pip_user }}'
   pip:
     name: "{{ item.package }}"
-    virtualenv: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}"
+    virtualenv: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.env_version }}"
     virtualenv_command: /usr/bin/python3 -m venv
-    version: "{{ item.version }}"
+    version: "{{ item.version | default(omit) }}"
     environment: "{{ item.environment | default(omit) }}"
     state: "{{ item.state }}"
   loop: "{{ pip_virtualenvs|default([]) }}"
-  when: item.state == 'present'
+  become: yes
+  become_user: "{{ pip_username }}"
+  when:
+    - pip_python_version == 3
+    #- item.state == 'present'
+    - pip_username is defined
+    - getent_passwd[pip_username] != none
   register: pip_create_virtualenvs
   until: pip_create_virtualenvs is succeeded
-  when: pip_python_version == 3
-
-- name: Ensure virtualenvs exist and python package(s) are installed to them
-  become: '{{ pip_user }}'
+  
+- name: Remove virtualenvs with state absent
   file:
-    path: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}"
+    path: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.env_version }}"
     state: "{{ item.state }}"
   loop: "{{ pip_virtualenvs|default([]) }}"
-  when: item.state == 'absent'
+  become: yes
+  become_user: "{{ pip_username }}"
+  when: 
+    - item.state == 'absent'
+    - pip_username is defined
+    - getent_passwd[pip_username] != none
   register: pip_delete_virtualenvs
   until: pip_delete_virtualenvs is succeeded
 
 - name: Ensure for fragments directory
-  become: '{{ pip_user }}'
   file:
     path: ~/bin/fragments
     state: directory
     mode: '0744'
+  become: yes
+  become_user: "{{ pip_username }}"
+  when:
+    - pip_username is defined
+    - getent_passwd[pip_username] != none
 
 - name: Ensure for aliases
-  become: '{{ pip_user }}'
   copy:
-    dest: ~/bin/fragments/{{ item.name }}-{{ item.version }}.sh
-    content: "alias {{ item.name }}-{{ item.version }}='source {{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.version }}/bin/activate'\n"
+    dest: ~/bin/fragments/{{ item.name }}-{{ item.env_version }}.sh
+    content: "alias {{ item.name }}-{{ item.env_version }}='source {{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.env_version }}/bin/activate'\n"
     mode: '0744'
   loop: "{{ pip_virtualenvs|default([]) }}"
-  when: item.state == 'present'
+  become: yes
+  become_user: "{{ pip_username }}"
+  when:
+    - item.state == 'present'
+    - pip_username is defined
+    - getent_passwd[pip_username] != none
 
 - name: assemble our fragments into a ~/bash_aliases file
-  become: '{{ pip_user }}'
   assemble:
     backup: yes
     remote_src: yes 
     src: ~/bin/fragments
     dest: ~/.bash_aliases
     mode: 0644
+  become: yes
+  become_user: "{{ pip_username }}"
+  when:
+    - pip_username is defined
+    - getent_passwd[pip_username] != none
 
 - name: remove our ~/.bash_aliases fragments directory
-  become: '{{ pip_user }}'
   file:
     state: absent
     path: ~/bin/fragments
   with_items:
     - "{{ pip_virtualenvs }}"
-
+  become: yes
+  become_user: "{{ pip_username }}"
+  when:
+    - pip_username is defined
+    - getent_passwd[pip_username] != none
