@@ -1,8 +1,34 @@
 ---
 # pip/defaults/main.yml
 
+pip_username: '{{ ansible_user }}'
 pip_python_version: 3
+pip__env_proxy_enabled: no
+pip_virtualenvs_base_path: ~/venvs
+pip_virtualenvs:
+  - name: ansible
+    env_version: 2.9.2
+    package: ansible
+    version: 2.9.2
+    state: present
+  # add latest molecule package to the virtualenv created above (~/venv/ansible/2.9.2
+  - name: ansible
+    env_version: 2.92
+    package: molecule
+    state: present
 
+  # create virtual python env
+  - name: ansible
+    env_version: 2.9.0
+    package: ansible
+    version: 2.9.0
+    state: present
+
+  # add package to python env added above
+  - name: ansible
+    env_version: 2.9.0
+    package: molecule
+    state: present
 
 _pip2_requirements:
   default:
@@ -44,30 +70,3 @@ _pip3_requirements:
     - python3-venv
 
 pip3_requirements: "{{ _pip3_requirements[ansible_distribution ~ '-' ~ ansible_distribution_major_version] | default(_pip3_requirements[ansible_distribution] | default(_pip3_requirements['default'])) }}"
-
-pip_username: '{{ ansible_user }}'
-
-pip__env_proxy_enabled: no
-
-pip_virtualenvs_base_path: ~/venvs
-
-pip_virtualenvs:
-  - name: ansible
-    version: 2.3.3
-    package: ansible
-    state: present
-
-  - name: ansible
-    package: ansible
-    version: 2.4.6
-    state: present
-
-  - name: ansible
-    package: ansible
-    version: 2.5.15
-    state: present
-
-  - name: molecule
-    package: molecule
-    version: 2.22
-    state: present

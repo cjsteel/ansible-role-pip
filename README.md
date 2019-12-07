@@ -1,5 +1,22 @@
 # pip
 
+## ERRORS
+
+on fedora docker image
+
+```yaml
+    TASK [cjsteel.pip : install pip3 requirements] *********************************
+    FAILED - RETRYING: install pip3 requirements (3 retries left).
+    FAILED - RETRYING: install pip3 requirements (2 retries left).
+    FAILED - RETRYING: install pip3 requirements (1 retries left).
+    fatal: [python_pip-fedora-latest]: FAILED! => {"attempts": 3, "changed": false, "failures": ["No package python3-venv available."], "msg": "Failed to install some of the specified packages", "rc": 1, "results": []}
+    
+    PLAY RECAP *********************************************************************
+    python_pip-fedora-latest   : ok=1    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0
+    
+ERROR: 
+```
+
 
 TODO: [![Build Status](https://travis-ci.org/cjsteel/ansible-role-pip.svg?branch=master)](https://travis-ci.org/cjsteel/ansible-role-pip)
 
