@@ -1,7 +1,5 @@
 ---
-- src: robertdebock.bootstrap
-#  version: 3.4.2
-#  name: robertdebock.bootstrap
+- robertdebock.bootstrap
 - robertdebock.buildtools
 - robertdebock.epel
-
+- robertdebock.python_pip
