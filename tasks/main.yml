@@ -39,7 +39,7 @@
   become_user: "{{ pip_username }}"
   when:
     - pip_python_version == 2
-    #- item.state == 'present'
+    # - item.state == 'present'
     - getent_passwd is defined
     - getent_passwd[pip_username] != none
 
@@ -59,12 +59,12 @@
   become_user: "{{ pip_username }}"
   when:
     - pip_python_version == 3
-    #- item.state == 'present'
+    # - item.state == 'present'
     - pip_username is defined
     - getent_passwd[pip_username] != none
   register: pip_create_virtualenvs
   until: pip_create_virtualenvs is succeeded
-  
+
 - name: Remove virtualenvs with state absent
   file:
     path: "{{ pip_virtualenvs_base_path }}/{{ item.name }}/{{ item.env_version }}"
@@ -72,7 +72,7 @@
   loop: "{{ pip_virtualenvs|default([]) }}"
   become: yes
   become_user: "{{ pip_username }}"
-  when: 
+  when:
     - item.state == 'absent'
     - pip_username is defined
     - getent_passwd[pip_username] != none
@@ -106,7 +106,7 @@
 - name: assemble our fragments into a ~/bash_aliases file
   assemble:
     backup: yes
-    remote_src: yes 
+    remote_src: yes
     src: ~/bin/fragments
     dest: ~/.bash_aliases
     mode: 0644
