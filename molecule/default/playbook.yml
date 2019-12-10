@@ -5,11 +5,40 @@
   gather_facts: yes
 
   roles:
+    - role: robertdebock.epel
+    - role: robertdebock.users
+      vars:
+        users_group_list:
+          - name: testuser
+            state: present
+        users_user_list:
+          - name: testuser
+            comment: test user
+            group: testuser
+            groups: users
+            cron_allow: yes
+
+    - role: robertdebock.update
+    - role: robertdebock.python_pip
+    - role: robertdebock.git
+      vars:
+        git_username: testuser
+        git_groupname: '{{ git_username }}'
+        git_repository_destination: '/home/{{ git_username }}/projects'
+        git_repositories:
+          - repo: https://github.com/robertdebock/robertdebock.bootstrap
+            dest: bootstrap
+          - repo: https://github.com/robertdebock/robertdebock.bootstrap
+            dest: bootstrap-force
+            force: yes
+          - repo: https://github.com/robertdebock/robertdebock.bootstrap
+            dest: bootstrap-version
+            version: 2.11.1
     - role: cjsteel.pip
       vars:
         pip_username: testuser
         pip_python_version: 3
-        pip_virtualenvs_base_path: /home/testuser
+        pip_virtualenvs_base_path: '/home/{{ pip_username }}/venvs'
         pip_virtualenvs:
           - name: ansible
             env_version: 2.9.2

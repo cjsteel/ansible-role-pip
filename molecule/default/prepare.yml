@@ -6,17 +6,3 @@
 
   roles:
     - robertdebock.bootstrap
-    - robertdebock.buildtools
-    - robertdebock.epel
-    - robertdebock.python_pip
-    - role: robertdebock.users
-      vars:
-        users_group_list:
-          - name: testuser
-            state: present
-        users_user_list:
-          - name: testuser
-            comment: test user
-            group: testuser
-            groups: users
-            cron_allow: yes
