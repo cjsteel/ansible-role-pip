@@ -3,3 +3,5 @@
 - robertdebock.buildtools
 - robertdebock.epel
 - robertdebock.python_pip
+- robertdebock.users
+- cjsteel.pip

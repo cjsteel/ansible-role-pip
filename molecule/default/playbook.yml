@@ -5,4 +5,18 @@
   gather_facts: yes
 
   roles:
-    - cjsteel.pip
+    - role: cjsteel.pip
+      vars:
+        pip_username: testuser
+        pip_python_version: 3
+        pip_virtualenvs_base_path: /home/testuser
+        pip_virtualenvs:
+          - name: ansible
+            env_version: 2.9.2
+            package: ansible
+            version: 2.9.2
+            state: present
+          - name: ansible
+            env_version: 2.9.2
+            package: molecule
+            state: present
