@@ -2,7 +2,8 @@
 language: python
 
 python:
-  - "3.7"
+  - "3.6"
+  # - "3.7"
 
 services:
   - docker
@@ -11,7 +12,7 @@ env:
   global:
     namespace="cjsteel"
   matrix:
-    - image="fedora"
+    - image="ubuntu"
 
 cache:
   - pip
