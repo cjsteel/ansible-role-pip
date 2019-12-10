@@ -8,8 +8,8 @@ lint:
 driver:
   name: docker
 platforms:
-  - name: "python_pip-${image:-fedora}-${tag:-latest}${TOX_ENVNAME}"
-    image: "${namespace:-robertdebock}/${image:-fedora}:${tag:-latest}"
+  - name: "python_pip-${image:-ubuntu}-${tag:-latest}${TOX_ENVNAME}"
+    image: "${namespace:-cjsteel}/${image:-ubuntu}:${tag:-latest}"
     command: /sbin/init
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
