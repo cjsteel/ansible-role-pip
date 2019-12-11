@@ -59,17 +59,17 @@ _pip3_requirements:
   default:
     - python3-pip
     - python3-setuptools
-    - python3-venv
+    - python3-virtualenv
   Debian:
     - python3-pip
     - python3-setuptools
-    - python3-venv
+    - python3-virtualenv
   Fedora:
     - python3-pip
     - python3-setuptools
   RedHat:
     - python3-pip
     - python3-setuptools
-    - python3-venv
+    - python3-virtualenv
 
 pip3_requirements: "{{ _pip3_requirements[ansible_distribution ~ '-' ~ ansible_distribution_major_version] | default(_pip3_requirements[ansible_distribution] | default(_pip3_requirements['default'])) }}"

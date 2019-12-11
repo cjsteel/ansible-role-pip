@@ -27,6 +27,30 @@
   when:
     - pip_username is defined
 
+- name: Upgrade pip for pip_usersname's pip
+  pip:
+    name: pip
+    extra_args: --user --upgrade
+  become: yes
+  become_user: "{{ pip_username }}"
+  when:
+    - pip_python_version == 2
+    - getent_passwd is defined
+    - getent_passwd[pip_username] != none
+  register: pip_upgrade_pip_usernames_pip
+  until: pip_upgrade_pip_usernames_pip is succeeded
+
+- name: Upgrade python2 system pip version
+  pip:
+    name: pip
+    extra_args: --upgrade
+  become: yes
+  when:
+    - pip_python_version == 2
+  register: pip_upgrade_system_pip
+  until: pip_upgrade_system_pip is succeeded
+
+
 - name: Ensure (Python2.x) virtualenvs exist and python package(s) are installed to them
   pip:
     name: "{{ item.package }}"
